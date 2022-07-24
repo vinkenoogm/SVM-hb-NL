@@ -1,6 +1,6 @@
-from pathlib import Path
+import argparse
 import pickle
-import sys
+from pyprojroot import here
 import warnings
 
 import pandas as pd
@@ -11,9 +11,16 @@ warnings.filterwarnings('ignore')
 data_path = here('data/')
 results_path = here('results/')
 
-nback = int(sys.argv[1])
-sex = sys.argv[2]
-foldersuffix = sys.argv[3]
+parser = argparse.ArgumentParser()
+parser.add_argument('nback', type=int,
+                    help="[int] ...")
+parser.add_argument('sex', type=str, choices=['men', 'women'],
+                    help="...")
+parser.add_argument('foldersuffix', type=str,
+                    help="...")
+args = parser.parse_args()
+
+nback, sex, foldersuffix = args.nback, args.sex, args.foldersuffix
 
 print(sex)
 

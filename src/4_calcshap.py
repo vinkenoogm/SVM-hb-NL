@@ -1,8 +1,7 @@
+import argparse
 import datetime
-from pathlib import Path
 import pickle
 from pyprojroot import here
-import sys
 import warnings
 
 import pandas as pd
@@ -12,10 +11,18 @@ warnings.filterwarnings('ignore')
 data_path = here('data/')
 results_path = here('results/')
 
-sex = sys.argv[1]
-nback = sys.argv[2]
-foldersuffix = sys.argv[3]
-n = sys.argv[4]
+parser = argparse.ArgumentParser()
+parser.add_argument('sex', type=str, choices=['men', 'women'],
+                    help="...")
+parser.add_argument('nback', type=int,
+                    help="[int] ...")
+parser.add_argument('foldersuffix', type=str,
+                    help="...")
+parser.add_argument('n', type=int,
+                    help="[int] ...")
+args = parser.parse_args()
+
+sex, nback, foldersuffix, n = args.sex, args.nback, args.foldersuffix, args.n
 
 
 def calc_shap(nback, sex, n=100):
@@ -40,4 +47,4 @@ def calc_shap(nback, sex, n=100):
 
 
 print(f'Calculating shap values for {sex} nback {nback} (N = {n}) starting at {datetime.datetime.now()}')
-calc_shap(nback, sex, int(n))
+calc_shap(nback, sex, n)
