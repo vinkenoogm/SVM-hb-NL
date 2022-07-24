@@ -1,18 +1,18 @@
-import numpy as np
-import pandas as pd 
+import pandas as pd
+from pathlib import Path
 import pickle
-import datetime
 import sys
 from sklearn.svm import SVC
-from sklearn.metrics import balanced_accuracy_score, make_scorer
 from sklearn.model_selection import GridSearchCV
-from sklearn.exceptions import UndefinedMetricWarning
 
 def warn(*args, **kwargs):
     pass
 import warnings
 warnings.warn = warn
 
+
+data_path = Path('/data1/vinkenoogm/')
+results_path = Path('../results/')
 
 nback = int(sys.argv[1])
 sex = sys.argv[2]
@@ -21,7 +21,7 @@ foldersuffix = sys.argv[3]
 print(sex)
 
 
-train = pd.read_pickle('/data1/vinkenoogm/scaled'+foldersuffix+'/'+str(sex)+'_'+str(nback)+'_train.pkl')
+train = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_train.pkl')
 X = train[train.columns[:-1]]
 y = train['HbOK']
 
@@ -31,14 +31,12 @@ params = {'C': [10, 1, 0.1],
 
 gridsearch = GridSearchCV(estimator=SVC(class_weight='balanced'),
                           param_grid=params,
-                          scoring = 'balanced_accuracy',
+                          scoring='balanced_accuracy',
                           error_score='raise',
                           cv=5,
                           verbose=2)
 gridsearch.fit(X, y)
 
-filename = '../results/hyperparams'+foldersuffix+'/hyperparams_' + str(sex) + '_' + str(nback) + '.pkl'
+filename = results_path / f'hyperparams{foldersuffix}/hyperparams_{sex}_{nback}.pkl'
 with open(filename, 'wb') as handle:
     pickle.dump(gridsearch.cv_results_, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
