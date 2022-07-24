@@ -1,10 +1,13 @@
-import pandas as pd
 from pathlib import Path
 import pickle
+from pyprojroot import here
 import sys
 
-data_path = Path('/data1/vinkenoogm/')
-result_path = Path('/home/vinkenoogm/SVM-NL/results')
+import pandas as pd
+
+
+data_path = here('data/')
+result_path = here('results/')
 
 sex = sys.argv[1]
 nback = int(sys.argv[2])
@@ -47,5 +50,6 @@ for timestep in range(-364, 371, 7):
         data_res = data_res.copy()
 
 print(data_res.head())
-path = data_path / f'pred_timechange{foldersuffix}/'
-data_res.to_pickle(path / f'data_res_{sex}_{nback}.pkl')
+output_path = data_path / f'pred_timechange{foldersuffix}/'
+output_path.mkdir(parents=True, exist_ok=True)
+data_res.to_pickle(output_path / f'data_res_{sex}_{nback}.pkl')

@@ -1,18 +1,15 @@
-import pandas as pd
 from pathlib import Path
 import pickle
 import sys
+import warnings
+
+import pandas as pd
 from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
 
-def warn(*args, **kwargs):
-    pass
-import warnings
-warnings.warn = warn
-
-
-data_path = Path('/data1/vinkenoogm/')
-results_path = Path('../results/')
+warnings.filterwarnings('ignore')
+data_path = here('data/')
+results_path = here('results/')
 
 nback = int(sys.argv[1])
 sex = sys.argv[2]
@@ -37,6 +34,9 @@ gridsearch = GridSearchCV(estimator=SVC(class_weight='balanced'),
                           verbose=2)
 gridsearch.fit(X, y)
 
-filename = results_path / f'hyperparams{foldersuffix}/hyperparams_{sex}_{nback}.pkl'
+output_folder = results_path / f'hyperparams{foldersuffix}/'
+output_folder.mkdir(parents=True, exist_ok=True)  # create folder if it does not yet exist
+
+filename = f'hyperparams_{sex}_{nback}.pkl'
 with open(filename, 'wb') as handle:
     pickle.dump(gridsearch.cv_results_, handle, protocol=pickle.HIGHEST_PROTOCOL)
