@@ -1,13 +1,17 @@
-import numpy as np
-import pandas as pd 
 import datetime
+import pandas as pd
+from pathlib import Path
 import pickle
 import sys
 from sklearn.metrics import classification_report
 from sklearn.svm import SVC
 
+data_path = Path('/data1/vinkenoogm/')
+results_path = Path('/home/vinkenoogm/SVM-NL/results/')
+
 foldersuffix = sys.argv[1]
 nbacks = sys.argv[2:]
+
 
 def train_svm(data, hyperparams):
     X = data[data.columns[:-1]]
@@ -17,7 +21,7 @@ def train_svm(data, hyperparams):
     hyp_g = hyperparams['gamma']
     hyp_k = hyperparams['kernel']
     
-    clf = SVC(C = hyp_c, gamma = hyp_g, kernel = hyp_k, probability=True, class_weight='balanced')
+    clf = SVC(C=hyp_c, gamma=hyp_g, kernel=hyp_k, probability=True, class_weight='balanced')
     clf.fit(X, y.values.ravel())
     
     return(clf)
@@ -34,11 +38,11 @@ def do_svm(nback):
     results = []
     clfs = []
     for sex in ['men', 'women']:
-        print('Sex:', sex, ' - ', datetime.datetime.now())
-        train = pd.read_pickle('/data1/vinkenoogm/scaled'+foldersuffix+'/'+str(sex)+'_'+str(nback)+'_train.pkl')
-        test = pd.read_pickle('/data1/vinkenoogm/scaled'+foldersuffix+'/'+str(sex)+'_'+str(nback)+'_test.pkl')
-        
-        hyps_all = pd.read_pickle('/home/vinkenoogm/SVM-NL/results/hyperparams'+foldersuffix+'/hyperparams_'+sex+'_'+str(nback)+'.pkl')
+        print(f'Sex: {sex}  -  {datetime.datetime.now()}')
+        train = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_train.pkl')
+        test = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_test.pkl')
+
+        hyps_all = pd.read_pickle(results_path / f'hyperparams{foldersuffix}/hyperparams_{sex}_{nback}.pkl')
         hyps_all = pd.DataFrame.from_dict(hyps_all)
         hyps = hyps_all.loc[hyps_all.rank_test_score == 1, 'params']
         hyps = hyps[hyps.index[0]]
@@ -49,14 +53,13 @@ def do_svm(nback):
         print('  Calculating accuracy - ', datetime.datetime.now())
         cl_rep_train = calc_accuracy(clf, train)
         cl_rep_val = calc_accuracy(clf, test)
-        results.append(cl_rep_train)
-        results.append(cl_rep_val)
+        results.extend([cl_rep_train, cl_rep_val])
         clfs.append(clf)
     return(results, clfs)
 
 for nback in nbacks:
     res, clf = do_svm(int(nback))
-    filename1 = '/home/vinkenoogm/SVM-NL/results/models'+foldersuffix+'/res_' + str(nback) + '.pkl'
-    filename2 = '/home/vinkenoogm/SVM-NL/results/models'+foldersuffix+'/clf_' + str(nback) + '.sav'
+    filename1 = results_path / f'models{foldersuffix}/res_{nback}.pkl'
+    filename2 = results_path / f'models{foldersuffix}/clf_{nback}.sav'
     pickle.dump(res, open(filename1, 'wb'))
     pickle.dump(clf, open(filename2, 'wb'))
