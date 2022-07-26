@@ -1,15 +1,16 @@
 import datetime
-import pandas as pd
 from pathlib import Path
 import pickle
-import shap
+from pyprojroot import here
 import sys
+import warnings
 
-import warnings 
+import pandas as pd
+import shap
+
 warnings.filterwarnings('ignore')
-
-data_path = Path('/data1/vinkenoogm/')
-results_path = Path('/home/vinkenoogm/SVM-NL/results/')
+data_path = here('data/')
+results_path = here('results/')
 
 sex = sys.argv[1]
 nback = sys.argv[2]
@@ -29,13 +30,14 @@ def calc_shap(nback, sex, n=100):
     explainer = shap.KernelExplainer(clf_s.predict, X_shap)
     shapvals = explainer.shap_values(X_shap)
 
-    path = results_path / f'shap{foldersuffix}/'
+    output_path = results_path / f'shap{foldersuffix}/'
+    output_path.mkdir(parents=True, exist_ok=True)
     filename1 = f'Xshap_{sex}_{nback}_{n}.pkl'
     filename2 = f'shapvals_{sex}_{nback}_{n}.pkl'
 
-    pickle.dump(X_shap, open(path+filename1, 'wb'))
-    pickle.dump(shapvals, open(path+filename2, 'wb'))
+    pickle.dump(X_shap, open(output_path / filename1, 'wb'))
+    pickle.dump(shapvals, open(output_path / filename2, 'wb'))
 
 
-print(f'Calculating shap values for  {sex}  nback {nback} ( N = {n} ) starting at {datetime.datetime.now()}')
+print(f'Calculating shap values for {sex} nback {nback} (N = {n}) starting at {datetime.datetime.now()}')
 calc_shap(nback, sex, int(n))

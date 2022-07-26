@@ -1,13 +1,15 @@
 import datetime
-import pandas as pd
 from pathlib import Path
 import pickle
+from pyprojroot import here
 import sys
+
+import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.svm import SVC
 
-data_path = Path('/data1/vinkenoogm/')
-results_path = Path('/home/vinkenoogm/SVM-NL/results/')
+data_path = here('data/')
+results_path = here('results/')
 
 foldersuffix = sys.argv[1]
 nbacks = sys.argv[2:]
@@ -57,9 +59,12 @@ def do_svm(nback):
     return results, clfs
 
 
+output_path = results_path / f'models{foldersuffix}/'
+output_path.mkdir(parents=True, exist_ok=True)
+
 for nback in nbacks:
     res, clf = do_svm(int(nback))
-    filename1 = results_path / f'models{foldersuffix}/res_{nback}.pkl'
-    filename2 = results_path / f'models{foldersuffix}/clf_{nback}.sav'
+    filename1 = output_path / f'res_{nback}.pkl'
+    filename2 = output_path / f'clf_{nback}.sav'
     pickle.dump(res, open(filename1, 'wb'))
     pickle.dump(clf, open(filename2, 'wb'))
