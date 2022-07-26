@@ -23,16 +23,15 @@ def train_svm(data, hyperparams):
     
     clf = SVC(C=hyp_c, gamma=hyp_g, kernel=hyp_k, probability=True, class_weight='balanced')
     clf.fit(X, y.values.ravel())
-    
-    return(clf)
+    return clf
+
 
 def calc_accuracy(clf, data):
     X = data[data.columns[:-1]]
     y = data[data.columns[-1:]]
-    
     y_pred = clf.predict(X)
-    
-    return(classification_report(y, y_pred, output_dict=True))
+    return classification_report(y, y_pred, output_dict=True)
+
 
 def do_svm(nback):
     results = []
@@ -46,16 +45,17 @@ def do_svm(nback):
         hyps_all = pd.DataFrame.from_dict(hyps_all)
         hyps = hyps_all.loc[hyps_all.rank_test_score == 1, 'params']
         hyps = hyps[hyps.index[0]]
-        
+
         print('  Training SVM - ', datetime.datetime.now())
         clf = train_svm(train, hyps)
-        
+
         print('  Calculating accuracy - ', datetime.datetime.now())
         cl_rep_train = calc_accuracy(clf, train)
         cl_rep_val = calc_accuracy(clf, test)
         results.extend([cl_rep_train, cl_rep_val])
         clfs.append(clf)
-    return(results, clfs)
+    return results, clfs
+
 
 for nback in nbacks:
     res, clf = do_svm(int(nback))

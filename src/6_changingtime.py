@@ -15,8 +15,7 @@ print(sex, nback, foldersuffix)
 def make_preds(data, clf):
     X = data[data.columns[:-1]]
     y = data[data.columns[-1:]]
-    y_pred = clf.predict(X)
-    return(y_pred)
+    return clf.predict(X)
 
 
 data = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_test.pkl')
