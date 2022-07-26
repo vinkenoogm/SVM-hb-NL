@@ -1,8 +1,7 @@
+import argparse
 import datetime
-from pathlib import Path
 import pickle
 from pyprojroot import here
-import sys
 
 import pandas as pd
 from sklearn.metrics import classification_report
@@ -11,8 +10,14 @@ from sklearn.svm import SVC
 data_path = here('data/')
 results_path = here('results/')
 
-foldersuffix = sys.argv[1]
-nbacks = sys.argv[2:]
+parser = argparse.ArgumentParser()
+parser.add_argument('foldersuffix', type=str,
+                    help="...")
+parser.add_argument('nbacks', nargs='+', type=int,
+                    help="[int, ...] ...")
+args = parser.parse_args()
+
+foldersuffix, nbacks = args.foldersuffix, args.nbacks
 
 
 def train_svm(data, hyperparams):
@@ -63,7 +68,7 @@ output_path = results_path / f'models{foldersuffix}/'
 output_path.mkdir(parents=True, exist_ok=True)
 
 for nback in nbacks:
-    res, clf = do_svm(int(nback))
+    res, clf = do_svm(nback)
     filename1 = output_path / f'res_{nback}.pkl'
     filename2 = output_path / f'clf_{nback}.sav'
     pickle.dump(res, open(filename1, 'wb'))
