@@ -13,17 +13,14 @@ results_path = here('results/')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('nback', type=int,
-                    help="[int] ...")
+                    help='[int] number of previous Hb values to use in prediction')
 parser.add_argument('sex', type=str, choices=['men', 'women'],
-                    help="...")
-parser.add_argument('foldersuffix', type=str,
-                    help="...")
+                    help='[men/women] sex to use in model')
+parser.add_argument('--foldersuffix', type=str, default='',
+                    help='[str] optional suffix indicating non-default run')
 args = parser.parse_args()
 
 nback, sex, foldersuffix = args.nback, args.sex, args.foldersuffix
-
-print(sex)
-
 
 train = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_train.pkl')
 X = train[train.columns[:-1]]
@@ -44,6 +41,6 @@ gridsearch.fit(X, y)
 output_folder = results_path / f'hyperparams{foldersuffix}/'
 output_folder.mkdir(parents=True, exist_ok=True)  # create folder if it does not yet exist
 
-filename = f'hyperparams_{sex}_{nback}.pkl'
+filename = output_folder / f'hyperparams_{sex}_{nback}.pkl'
 with open(filename, 'wb') as handle:
     pickle.dump(gridsearch.cv_results_, handle, protocol=pickle.HIGHEST_PROTOCOL)
