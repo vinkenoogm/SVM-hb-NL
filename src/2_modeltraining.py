@@ -11,13 +11,15 @@ data_path = here('data/')
 results_path = here('results/')
 
 parser = argparse.ArgumentParser()
-parser.add_argument('foldersuffix', type=str,
-                    help="...")
-parser.add_argument('nbacks', nargs='+', type=int,
-                    help="[int, ...] ...")
+parser.add_argument('nback', type=int,
+                    help='[int] number of previous Hb values to use in prediction')
+parser.add_argument('sex', type=str, choices=['men', 'women'],
+                    help='[men/women] sex to use in model')
+parser.add_argument('--foldersuffix', type=str, default='',
+                    help='[str] optional suffix indicating non-default run')
 args = parser.parse_args()
 
-foldersuffix, nbacks = args.foldersuffix, args.nbacks
+nback, sex, foldersuffix = args.nback, args.sex, args.foldersuffix
 
 
 def train_svm(data, hyperparams):
@@ -41,35 +43,28 @@ def calc_accuracy(clf, data):
 
 
 def do_svm(nback):
-    results = []
-    clfs = []
-    for sex in ['men', 'women']:
-        print(f'Sex: {sex}  -  {datetime.datetime.now()}')
-        train = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_train.pkl')
-        test = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_test.pkl')
+    train = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_train.pkl')
+    test = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_test.pkl')
 
-        hyps_all = pd.read_pickle(results_path / f'hyperparams{foldersuffix}/hyperparams_{sex}_{nback}.pkl')
-        hyps_all = pd.DataFrame.from_dict(hyps_all)
-        hyps = hyps_all.loc[hyps_all.rank_test_score == 1, 'params']
-        hyps = hyps[hyps.index[0]]
+    hyps_all = pd.read_pickle(results_path / f'hyperparams{foldersuffix}/hyperparams_{sex}_{nback}.pkl')
+    hyps_all = pd.DataFrame.from_dict(hyps_all)
+    hyps = hyps_all.loc[hyps_all.rank_test_score == 1, 'params']
+    hyps = hyps[hyps.index[0]]
 
-        print('  Training SVM - ', datetime.datetime.now())
-        clf = train_svm(train, hyps)
+    clf = train_svm(train, hyps)
 
-        print('  Calculating accuracy - ', datetime.datetime.now())
-        cl_rep_train = calc_accuracy(clf, train)
-        cl_rep_val = calc_accuracy(clf, test)
-        results.extend([cl_rep_train, cl_rep_val])
-        clfs.append(clf)
-    return results, clfs
+    cl_rep_train = calc_accuracy(clf, train)
+    cl_rep_val = calc_accuracy(clf, test)
+    results = [cl_rep_train, cl_rep_val]
+    
+    return results, clf
 
 
 output_path = results_path / f'models{foldersuffix}/'
 output_path.mkdir(parents=True, exist_ok=True)
 
-for nback in nbacks:
-    res, clf = do_svm(nback)
-    filename1 = output_path / f'res_{nback}.pkl'
-    filename2 = output_path / f'clf_{nback}.sav'
-    pickle.dump(res, open(filename1, 'wb'))
-    pickle.dump(clf, open(filename2, 'wb'))
+res, clf = do_svm(nback)
+filename1 = output_path / f'res_{sex}_{nback}.pkl'
+filename2 = output_path / f'clf_{sex}_{nback}.sav'
+pickle.dump(res, open(filename1, 'wb'))
+pickle.dump(clf, open(filename2, 'wb'))
