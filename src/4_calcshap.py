@@ -12,17 +12,17 @@ data_path = here('data/')
 results_path = here('results/')
 
 parser = argparse.ArgumentParser()
-parser.add_argument('sex', type=str, choices=['men', 'women'],
-                    help="...")
 parser.add_argument('nback', type=int,
-                    help="[int] ...")
-parser.add_argument('foldersuffix', type=str,
-                    help="...")
+                    help='[int] number of previous Hb values to use in prediction')
+parser.add_argument('sex', type=str, choices=['men', 'women'],
+                    help='[men/women] sex to use in model')
 parser.add_argument('n', type=int,
-                    help="[int] ...")
+                    help='[int] number of donors to calculate SHAP values on')
+parser.add_argument('--foldersuffix', type=str, default='',
+                    help='[str] optional suffix indicating non-default run')
 args = parser.parse_args()
 
-sex, nback, foldersuffix, n = args.sex, args.nback, args.foldersuffix, args.n
+sex, nback, n, foldersuffix = args.sex, args.nback, args.n, args.foldersuffix
 
 
 def calc_shap(nback, sex, n=100):

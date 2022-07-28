@@ -9,12 +9,12 @@ data_path = here('data/')
 result_path = here('results/')
 
 parser = argparse.ArgumentParser()
-parser.add_argument('sex', type=str, choices=['men', 'women'],
-                    help="...")
 parser.add_argument('nback', type=int,
-                    help="[int] ...")
-parser.add_argument('foldersuffix', type=str,
-                    help="...")
+                    help='[int] number of previous Hb values to use in prediction')
+parser.add_argument('sex', type=str, choices=['men', 'women'],
+                    help='[men/women] sex to use in model')
+parser.add_argument('--foldersuffix', type=str, default='',
+                    help='[str] optional suffix indicating non-default run')
 args = parser.parse_args()
 
 sex, nback, foldersuffix = args.sex, args.nback, args.foldersuffix
@@ -28,14 +28,13 @@ def make_preds(data, clf):
 
 
 data = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_test.pkl')
-clf = pickle.load(open(result_path / f'models{foldersuffix}/clf_{nback}.sav', 'rb'))
-clf_s = clf[0] if sex == 'men' else clf[1]
+clf = pickle.load(open(result_path / f'models{foldersuffix}/clf_{sex}_{nback}.sav', 'rb'))
 scaler = pickle.load(open(result_path / f'scalers{foldersuffix}/{sex}_{nback}.pkl', 'rb'))
 
 print('loaded data')
 
 data_res = data.copy()
-y_pred_first = make_preds(data, clf_s)
+y_pred_first = make_preds(data, clf)
 data_res['HbOK_pred'] = y_pred_first
 
 timecols = ['TimetoFer', *[f'TimetoPrev{str(n)}' for n in range(1, nback+1)]]
@@ -48,7 +47,7 @@ for timestep in range(-364, 371, 7):
     data_timestep['Age'] = data_timestep['Age'] + (timestep / 365)
     data_timestep[data_timestep.columns[:-1]] = scaler.transform(data_timestep[data_timestep.columns[:-1]])
 
-    y_pred = make_preds(data_timestep, clf_s)
+    y_pred = make_preds(data_timestep, clf)
 
     varname = f'HbOK_pred_{timestep}'
     data_res[varname] = y_pred
@@ -56,6 +55,6 @@ for timestep in range(-364, 371, 7):
         data_res = data_res.copy()
 
 print(data_res.head())
-output_path = data_path / f'pred_timechange{foldersuffix}/'
+output_path = result_path / f'pred_timechange{foldersuffix}/'
 output_path.mkdir(parents=True, exist_ok=True)
 data_res.to_pickle(output_path / f'data_res_{sex}_{nback}.pkl')
