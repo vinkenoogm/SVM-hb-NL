@@ -18,31 +18,30 @@ Five different models (SVM-1 through SVM-5) are trained separately for men and w
 Variable	 | Unit or values |	Description
 -------------|----------------|----------------------------------------------------------------------------------------------
 Sex	         | {male, female} |	Biological sex of the donor; separate models are trained for men and women
--------------|----------------|----------------------------------------------------------------------------------------------
 Age          | years          |	Donor age at time of donation
--------------|----------------|----------------------------------------------------------------------------------------------
 Time         | hours          |	Registration time when the donor arrived at the blood bank
--------------|----------------|----------------------------------------------------------------------------------------------
 Month        | {1-12}         |	Month of the year that the visit took place
--------------|----------------|----------------------------------------------------------------------------------------------
 NumDon       | count          |	Number of successful (collected volume > 250 mL) whole-blood donations in the last 24 months
--------------|----------------|----------------------------------------------------------------------------------------------
 FerritinPrev | ng/mL          |	Most recent ferritin level measured in this donor
--------------|----------------|----------------------------------------------------------------------------------------------
 DaysSinceFer | days           |	Time since this donor’s last ferritin measurement
--------------|----------------|----------------------------------------------------------------------------------------------
 HbPrevn      | mmol/L         |	Hemoglobin level at nth previous visit, for n between 1-5
--------------|----------------|----------------------------------------------------------------------------------------------
 DaysSinceHbn | days	          | Time since related Hb measurement at nth previous visit, for n between 1-5
 
 
 ## Files
-Code files are numbered in order of use. 
+Code files are numbered in order of use. Python scripts all use the following arguments:
+
+Argument     | Description
+-------------|--------------------------------------------------------
+nback        | [int] Which model to use (number of previous donations)
+sex          | [men/women] Use male or female donors
+foldersuffix | [str] Optional foldersuffix to specify a run 
 
 ### 0_preprocessing.ipynb
 This notebook takes the raw donation data (source files) as collected by Sanquin. Preprocessing includes merging donation files from different years; selecting relevant donations and variables; manipulating recorded variables into required predictor variables; scaling the variables to N(0,1); saving train and test data sets; describing marginal distributions of predictor variables.
 
 ### 1_hyperparams.py
+Run with arguments: 
 This script takes as input the scaled train data sets produced in 0_preprocessing.ipynb. Using a grid search with 5-fold cross-validation, hyperparameters C and gamma are optimized for support vector machines with RBF kernel. The results of the grid search are saved in /results/hyperparams/.
 
 ### 2_modeltraining.py
@@ -52,9 +51,19 @@ In this script all models are trained using the scaled train data sets and the o
 This notebook reads the res\_{sex}\_{n}.pkl files and creates graphs that show model performance. These plots are also saved in /results/plots_performance/. 
 
 ### 4_calcshap.py
+Additional argument:
+
+Argument     | Description
+-------------|---------------------------------------------------------------------
+n            | [int] Number of randomly selected donors to calculate SHAP values on
+
+This script calculates SHAP values for a random subset of donors from the test set. Results are not shared because they contain donor-level sensitive information.
 
 ### 5_plotshap.ipynb
+In this notebook, summary plots for the SHAP values calculated by 4_calcshap.py are created and saved in /results/plots_shap/.
 
 ### 6_changingtime.py
+This script uses the models trained in 2_modeltraining.py and manipulates time-related predictor variables to make predictions for different invitation dates. 
 
 ### 7_impactbloodsupply.ipynb
+This notebook uses the prediction results from 6_changingtime.py to assess impact on the blood supply, should these models be used to guide donor invitations. It saves a version of the prediction files without sensitive donor information in /results/pred_timechange/ and plots are saved to /results/plots_performance/.
