@@ -1,5 +1,6 @@
 # SVM-hb-NL
-This repository contains the code used to obtain the results that are described in the scientific article "Explainable hemoglobin deferral predictions using machine learning models: interpretation and consequences for the blood supply" (manuscript currently under review). 
+This repository contains the code used to obtain the results that are described in the scientific article "Explainable hemoglobin deferral predictions using machine learning models: interpretation and consequences for the blood supply" (manuscript currently under review). The repository has been indexed on Zenodo: [![DOI](https://zenodo.org/badge/511832055.svg)](https://zenodo.org/badge/latestdoi/511832055)
+
 
 ## Data 
 The data used in this analysis is collected by Sanquin Blood Supply Foundation, from donors who have given permission for the use of their data in scientific research. Due to privacy reasons this data will not be shared. The /data folder contains a description of the raw data, so that researchers with access to similar data may use this code to analyse their own data.
