@@ -29,12 +29,10 @@ def calc_shap(nback, sex, n=100):
     filename = results_path / f'models{foldersuffix}/clf_{nback}.sav'
     clf = pickle.load(open(filename, 'rb'))
 
-    index = 0 if sex == 'men' else 1
-    val = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_test.pkl')
-    clf_s = clf[index]
-    X_val = val[val.columns[:-1]]
-    X_shap = shap.sample(X_val, n)
-    explainer = shap.KernelExplainer(clf_s.predict, X_shap)
+    test = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_test.pkl')
+    X_test = test[test.columns[:-1]]
+    X_shap = shap.sample(X_test, n)
+    explainer = shap.KernelExplainer(clf.predict, X_shap)
     shapvals = explainer.shap_values(X_shap)
 
     output_path = results_path / f'shap{foldersuffix}/'
