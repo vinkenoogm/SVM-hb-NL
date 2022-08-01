@@ -26,7 +26,7 @@ sex, nback, n, foldersuffix = args.sex, args.nback, args.n, args.foldersuffix
 
 
 def calc_shap(nback, sex, n=100):
-    filename = results_path / f'models{foldersuffix}/clf_{nback}.sav'
+    filename = results_path / f'models{foldersuffix}/clf_{sex}_{nback}.sav'
     clf = pickle.load(open(filename, 'rb'))
 
     test = pd.read_pickle(data_path / f'scaled{foldersuffix}/{sex}_{nback}_test.pkl')
