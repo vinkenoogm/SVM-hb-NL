@@ -76,6 +76,28 @@ nback        | [int] Which model to use (number of previous donations)
 sex          | [men/women] Use male or female donors
 foldersuffix | [str] Optional foldersuffix to specify a run 
 
+For example:
+
+```
+$ python src/1_hyperparams.py 3 men
+```
+
+To see which arguments are accepted, you can use `--help`:
+
+```
+$ python src/1_hyperparams.py --help
+usage: 1_hyperparams.py [-h] [--foldersuffix FOLDERSUFFIX] nback {men,women}
+
+positional arguments:
+  nback                 [int] number of previous Hb values to use in prediction
+  {men,women}           [men/women] sex to use in model
+
+options:
+  -h, --help            show this help message and exit
+  --foldersuffix FOLDERSUFFIX
+                        [str] optional suffix indicating non-default run
+```
+
 ### 0_preprocessing.ipynb
 This notebook takes the raw donation data (source files) as collected by Sanquin.
 Preprocessing includes
