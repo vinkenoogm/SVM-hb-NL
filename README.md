@@ -1,9 +1,13 @@
 # SVM-hb-NL
+
+[![Python Version](https://img.shields.io/badge/Python-3.10-blue)](https://python.org)
+[![DOI](https://zenodo.org/badge/511832055.svg)][Zenodo]
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/vinkenoogm/SVM-hb-NL/HEAD)
+
 This repository contains the code used to obtain the results that are described
 in the scientific article "Explainable hemoglobin deferral predictions using
 machine learning models: interpretation and consequences for the blood supply"
-(manuscript currently under review). The repository has been indexed on Zenodo:
-[![DOI](https://zenodo.org/badge/511832055.svg)](https://zenodo.org/badge/latestdoi/511832055)
+(manuscript currently under review). The repository has been indexed on [Zenodo].
 
 
 ## Data 
@@ -125,3 +129,5 @@ impact on the blood supply, should these models be used to guide donor
 invitations. It saves a version of the prediction files without sensitive donor
 information in `results/pred_timechange/` and plots are saved to
 `results/plots_performance/`.
+
+[Zenodo]: https://zenodo.org/badge/latestdoi/511832055
