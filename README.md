@@ -15,7 +15,7 @@ To use these files, clone the repository:
 `git clone git@github.com:vinkenoogm/SVM-hb-NL.git`
 `cd SVM-hb-NL`
 
-Create and activate a virtual environment (e.g. `python -n venv venv` and install the required packages using `pip install -r requirements.txt`. This file contains all necessary (Python) packages along with version information. All code was run using Python 3.10.4. With large datasets, code in .py files is computationally expensive to run and running on a HPC or similar is recommended. 
+Create and activate a virtual environment (e.g. `python -m venv venv` and install the required packages using `pip install -r requirements.txt`. This file contains all necessary (Python) packages along with version information. All code was run using Python 3.10.4. With large datasets, code in .py files is computationally expensive to run and running on a HPC or similar is recommended. 
 
 ## Models
 Five different models (SVM-1 through SVM-5) are trained separately for men and women, resulting in ten models total. The number in the model name indicates how many previous Hb measurements are used in the prediction. As donors can only be included in SVM-n if they have at least n previous visits, sample sizes decrease from SVM-1 to SVM-5. The following predictor variables are used:
