@@ -8,10 +8,14 @@ The data used in this analysis is collected by Sanquin Blood Supply Foundation, 
 ## Scientific abstract
 > Accurate hemoglobin (Hb) deferral predictions for whole-blood donors could aid blood banks in reducing deferral rates and increasing efficiency and donor motivation. Complex models are needed to make accurate predictions, but predictions must also be explainable. Before implementation of a prediction model, its impact on the blood supply should be estimated to avoid shortages.
 > Donation visits between October 2017 and December 2021 were selected from Sanquin’s database system. The following variables were available for each visit: donor sex, age, donation start time, month, number of donations in the last 24 months, most recent ferritin level, days since last ferritin measurement, Hb at nth previous visit (n between 1 and 5), days since nth previous visit. Outcome variable Hb deferral has two classes: deferred and not deferred. Support vector machines were used as prediction models, and SHapley Additive exPlanations (SHAP) values were used to quantify the contribution of each variable to the model predictions. Performance was assessed using precision and recall of both outcome classes. The potential impact on blood supply was estimated by predicting deferral at earlier or later donation dates.
-> We present a model that predicts Hb deferral in an explainable way. If used in practice, 64% of non-deferred donors would be invited on or before their original donation date, while 80% of deferred donors would be invited later. With a shorter average donation interval, the number of blood bank visits would increase by 7%, while deferral rates would decrease by 60% (currently 3% for women, 1% for men). 
+> We present a model that predicts Hb deferral in an explainable way. If used in practice, 64% of non-deferred donors would be invited on or before their original donation date, while 80% of deferred donors would be invited later. With a shorter average donation interval, the number of blood bank visits would increase by 7%, while deferral rates would decrease by 60% (currently 3% for women, 1% for men).
 
-## Requirements
-The file requirements.txt contains all necessary (Python) packages along with version information. All code was run using Python 3.10.4. With large datasets, code in .py files is computationally expensive to run and running on a HPC or similar is recommended. 
+## Installation
+To use these files, clone the repository:
+`git clone git@github.com:vinkenoogm/SVM-hb-NL.git`
+`cd SVM-hb-NL`
+
+Create and activate a virtual environment (e.g. `python -n venv venv` and install the required packages using `pip install -r requirements.txt`. This file contains all necessary (Python) packages along with version information. All code was run using Python 3.10.4. With large datasets, code in .py files is computationally expensive to run and running on a HPC or similar is recommended. 
 
 ## Models
 Five different models (SVM-1 through SVM-5) are trained separately for men and women, resulting in ten models total. The number in the model name indicates how many previous Hb measurements are used in the prediction. As donors can only be included in SVM-n if they have at least n previous visits, sample sizes decrease from SVM-1 to SVM-5. The following predictor variables are used:
