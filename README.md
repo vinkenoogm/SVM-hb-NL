@@ -41,11 +41,14 @@ similar data may use this code to analyse their own data.
 > would increase by 7%, while deferral rates would decrease by 60% (currently
 > 3% for women, 1% for men).
 
-## Requirements
-The file `requirements.txt` contains all necessary (Python) packages along with
-version information. All code was run using Python 3.10.4. With large datasets,
-code in .py files is computationally expensive to run and running on a HPC or
-similar is recommended.
+## Installation
+To use these files, clone the repository:
+`git clone git@github.com:vinkenoogm/SVM-hb-NL.git`
+`cd SVM-hb-NL`
+
+Create and activate a virtual environment (e.g. `python -m venv venv`) and install the required packages using `pip install -r requirements.txt`. 
+This file contains all necessary (Python) packages along with version information. All code was run using Python 3.10.4. With large datasets, 
+code in .py files is computationally expensive to run and running on a HPC or similar is recommended. 
 
 ## Models
 Five different models (SVM-1 through SVM-5) are trained separately for men and
